@@ -1,11 +1,17 @@
 package org.jd522.screens;
 
+import org.jd522.Constants.Categories;
 import org.jd522.Constants.ColorConstants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class MainScreen extends JFrame {
+    private String url = "jdbc:sqlite:src/main/java/org/jd522/db/Tasks.db";
+    private Connection connection = null;
+
     public MainScreen() {
         super("Main Screen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -14,7 +20,16 @@ public class MainScreen extends JFrame {
         setSize(1000, 600);
         setLocationRelativeTo(null);
         getContentPane().setBackground(Color.decode(ColorConstants.DARK_GREY));
-        
+
+
+        try{
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection(url);
+            System.out.println("Connected to SQLite database");
+        }catch (Exception e){
+            System.out.println("Could Not establish connection");
+        }
+        //Method to Add Components to the Screen
         AddComponentsToScreen();
     }
 
@@ -66,13 +81,6 @@ public class MainScreen extends JFrame {
         addTaskButton.setForeground(Color.WHITE);
         add(addTaskButton);
 
-        enum Category {
-            WORK,
-            PERSONAL,
-            LEARNING,
-            FITNESS
-        }
-
         JLabel filterLabel = new JLabel("Search By Category");
         filterLabel.setForeground(Color.WHITE);
         filterLabel.setFont(new Font("Verdana", Font.BOLD, 16));
@@ -89,7 +97,7 @@ public class MainScreen extends JFrame {
         comboBox.setForeground(Color.WHITE);
         add(comboBox);
 
-        for(Category category : Category.values()) {
+        for(Categories category : Categories.values()) {
             comboBox.addItem(category.toString());
         }
 
