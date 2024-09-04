@@ -11,17 +11,16 @@ import java.sql.Statement;
 public class DataServices {
 
     /**
-     * @Author: WJ-Bos
      * @param url
-     * @param connection
-     *      This method will create a table if it doesn't exist
-     *     This Method creates a Simple Schema for a Task
-     *     Using Auto Increment for the ID
-     * */
-    public void createTableIfNotExist(String url, Connection connection){
+     * @param connection This method will create a table if it doesn't exist
+     *                   This Method creates a Simple Schema for a Task
+     *                   Using Auto Increment for the ID
+     * @Author: WJ-Bos
+     */
+    public void createTableIfNotExist(String url, Connection connection) {
         Statement statement = null;
 
-        try{
+        try {
             statement = connection.createStatement();
             String createStatement = "CREATE TABLE IF NOT EXISTS tasks " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -29,6 +28,15 @@ public class DataServices {
                     "task_description VARCHAR(255), " +
                     "task_category VARCHAR(50), " +
                     "task_status VARCHAR(255))";
+            statement.executeUpdate(createStatement);
+            statement.close();
+
+
+            //Seed the Tasks Table if the Table is empty
+            if (isTableEmpty(url, connection)) {
+                seedData(url, connection);
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -37,12 +45,23 @@ public class DataServices {
     private void seedData(String url, Connection connection) {
         Statement statement = null;
 
-        try{
+        try {
             statement = connection.createStatement();
-            String insertStatement = "INSERT INTO tasks (task_title, task_description, task_category, task_status) " +
-                    "VALUES ('Task 1', 'Task 1 description', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')";
+            String insertStatement;
 
-        }catch (SQLException e) {
+            insertStatement = "INSERT INTO tasks (task_title, task_description, task_category, task_status) VALUES " +
+                    "('Laundry', 'Wash, dry, fold, and put away clothes', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Vacuum', 'Clean the floors', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Dinner', 'Make dinner', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Workout', 'Go for a run and do some strength exercises', '" + Categories.FITNESS.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Learn Java', 'Watch tutorials and practice programming', '" + Categories.LEARNING.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Read a book', 'Read a book about programming', '" + Categories.LEARNING.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Fix the bike', 'Fix the bike and take it for a ride', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Paint the room', 'Paint the bedroom', '" + Categories.WORK.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Clean the house', 'Clean the entire house', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Buy groceries', 'Buy groceries for the week', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')";
+            statement.executeUpdate(insertStatement);
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -50,9 +69,7 @@ public class DataServices {
     /**
      * @param url
      * @param connection
-     * @return
-     *
-     * This method will check if the table is empty
+     * @return This method will check if the table is empty
      * It does this by checking if there are any rows in the table
      */
 
