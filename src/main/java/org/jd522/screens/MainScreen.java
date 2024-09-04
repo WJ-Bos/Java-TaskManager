@@ -2,6 +2,7 @@ package org.jd522.screens;
 
 import org.jd522.Constants.Categories;
 import org.jd522.Constants.ColorConstants;
+import org.jd522.Services.DataServices;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,7 @@ public class MainScreen extends JFrame {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection(url);
             System.out.println("Connected to SQLite database");
+            DataServices.createTableIfNotExist(url, connection);
         }catch (Exception e){
             System.out.println("Could Not establish connection");
         }

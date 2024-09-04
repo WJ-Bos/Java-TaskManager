@@ -17,7 +17,7 @@ public class DataServices {
      *                   Using Auto Increment for the ID
      * @Author: WJ-Bos
      */
-    public void createTableIfNotExist(String url, Connection connection) {
+    public static void createTableIfNotExist(String url, Connection connection) {
         Statement statement = null;
 
         try {
@@ -36,13 +36,14 @@ public class DataServices {
             if (isTableEmpty(url, connection)) {
                 seedData(url, connection);
             }
+            statement.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void seedData(String url, Connection connection) {
+    private static void  seedData(String url, Connection connection) {
         Statement statement = null;
 
         try {
@@ -61,6 +62,7 @@ public class DataServices {
                     "('Clean the house', 'Clean the entire house', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
                     "('Buy groceries', 'Buy groceries for the week', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')";
             statement.executeUpdate(insertStatement);
+            statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +75,7 @@ public class DataServices {
      * It does this by checking if there are any rows in the table
      */
 
-    private boolean isTableEmpty(String url, Connection connection) {
+    private static boolean isTableEmpty(String url, Connection connection) {
         try (Statement statement = connection.createStatement()) {
             String query = "SELECT COUNT(*) FROM tasks";
             try (ResultSet rs = statement.executeQuery(query)) {
