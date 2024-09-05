@@ -1,13 +1,16 @@
 package org.jd522.screens;
 
-import org.jd522.Constants.Categories;
+import org.jd522.Classes.Category;
 import org.jd522.Constants.ColorConstants;
+import org.jd522.DTOs.TaskDTO;
 import org.jd522.Services.DataServices;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 
 public class MainScreen extends JFrame {
     private String url = "jdbc:sqlite:src/main/java/org/jd522/db/Tasks.db";
@@ -33,19 +36,21 @@ public class MainScreen extends JFrame {
             System.out.println("Could Not establish connection");
         }
 
+        ArrayList<TaskDTO> currentTasks = DataServices.fetchAllTasks(connection);
+
         //Method to Add Components to the Screen By Calling Inner Class
-        MainGui mainScreen = new MainGui();
+        MainGui mainScreen = new MainGui(connection,currentTasks);
     }
 
     //Inner Class to Handle Gui Components
     private class MainGui{
 
         //Adding the Components when new Gui instance is created
-        public MainGui(){
-            AddComponentsToScreen();
+        public MainGui(Connection connection, ArrayList<TaskDTO> currentTasks){
+            AddComponentsToScreen(connection,currentTasks);
         }
 
-        private void AddComponentsToScreen() {
+        private void AddComponentsToScreen(Connection connection, ArrayList<TaskDTO> currentTasks) {
             JLabel title = new JLabel("Task Management");
             title.setForeground(Color.WHITE);
             title.setFont(new Font("Verdana", Font.BOLD, 22));
@@ -70,10 +75,7 @@ public class MainScreen extends JFrame {
             searchButton.setForeground(Color.WHITE);
             add(searchButton);
 
-            JTable table = new JTable();
-            table.setSize(520, 300);
-            table.setLocation(60, 130);
-            add(table);
+            createJTable(currentTasks);
 
             JButton updateTaskButton = new JButton("Update Task");
             updateTaskButton.setSize(200,50);
@@ -115,7 +117,8 @@ public class MainScreen extends JFrame {
             comboBox.setForeground(Color.WHITE);
             add(comboBox);
 
-            for(Categories category : Categories.values()) {
+            //getting the Categories from the Category enum and adding them to the ComboBox
+            for(Category.CategoryValue category : Category.CategoryValue.values()) {
                 comboBox.addItem(category.toString());
             }
 
@@ -136,6 +139,34 @@ public class MainScreen extends JFrame {
             exportButton.setBackground(Color.decode(ColorConstants.LIGHT_PURPLE));
             exportButton.setForeground(Color.WHITE);
             add(exportButton);
+        }
+
+        private void createJTable(ArrayList<TaskDTO> tasks) {
+            String[] columnNames = {"ID","Title", "Description", "Category", "Status"};
+            DefaultTableModel taskTableModel = new DefaultTableModel(columnNames, 0){
+
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            for(TaskDTO task : tasks) {
+                Object[] rowData ={
+                    task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getCategory().getCategoryValue().name(),
+                        task.getStatus()
+                };
+                taskTableModel.addRow(rowData);
+            }
+
+            JTable taskTable = new JTable(taskTableModel);
+            JScrollPane scrollPane = new JScrollPane(taskTable);
+            scrollPane.setLocation(60, 130);
+            scrollPane.setSize(520, 300);
+            add(scrollPane);
         }
     }
 }

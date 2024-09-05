@@ -95,7 +95,7 @@ public class DataServices {
      * Fetches all tasks from the Database
      */
 
-    public ArrayList<TaskDTO> fetchAllTasks(Connection connection) {
+    public static ArrayList<TaskDTO> fetchAllTasks(Connection connection) {
 
         ArrayList<TaskDTO> tasks = new ArrayList<>();
 
@@ -104,7 +104,7 @@ public class DataServices {
             ResultSet resultSet = statement.executeQuery(selectStatement);
 
             while (resultSet.next()) {
-                int id = resultSet.getInt("task_id");
+                int id = resultSet.getInt("id");
                 String title = resultSet.getString("task_title");
                 String description = resultSet.getString("task_description");
                 String categoryString = resultSet.getString("task_category");

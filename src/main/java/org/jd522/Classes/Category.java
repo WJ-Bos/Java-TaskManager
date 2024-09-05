@@ -8,6 +8,10 @@ public class Category {
         this.categoryValue = categoryValue;
     }
 
+    public CategoryValue getCategoryValue(){
+        return categoryValue;
+    }
+
 
     public enum CategoryValue{
         WORK("Work"),

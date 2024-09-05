@@ -1,5 +1,6 @@
 package org.jd522;
 
+import org.jd522.screens.AddTaskScreen;
 import org.jd522.screens.MainScreen;
 
 import javax.swing.*;
