@@ -141,6 +141,8 @@ public class MainScreen extends JFrame {
                     UpdateTaskScreen updateTaskScreen = new UpdateTaskScreen(task);
                     updateTaskScreen.setVisible(true);
                     dispose();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Please Click on a Task to Select");
                 }
             });
 
