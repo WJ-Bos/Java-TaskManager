@@ -143,7 +143,6 @@ public class DataServices {
     }
 
 
-
     /**
      * @param connection
      * @param title
@@ -175,6 +174,30 @@ public class DataServices {
             throw new RuntimeException(e);
         }
         //returning Null if there is No task found
+        return null;
+    }
+
+    public static TaskDTO searchTaskById(Connection connection, int id){
+        String selectStatement = "SELECT * FROM tasks WHERE id = ? ";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(selectStatement)){
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                String taskTitle = resultSet.getString("task_title");
+                String description = resultSet.getString("task_description");
+                String category = resultSet.getString("task_category");
+                String status = resultSet.getString("task_status");
+
+                //getting the Category Value from the String
+                Category.CategoryValue categoryValue = Category.CategoryValue.valueOf(category);
+
+                return new TaskDTO(id, taskTitle, description, new Category(categoryValue), status);
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 }

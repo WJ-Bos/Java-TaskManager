@@ -86,8 +86,41 @@ public class MainScreen extends JFrame {
                 }
             });
 
+//--------------------------------------------------------------------------------------------------
 
-            createJTable(currentTasks);
+            /**
+             * JTable and ScrollPane
+             * Displaying all tasks fetched from the database
+             * Creating custom JTableModel for JTable
+             */
+
+            String[] columnNames = {"ID","Title", "Description", "Category", "Status"};
+            DefaultTableModel taskTableModel = new DefaultTableModel(columnNames, 0){
+
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            for(TaskDTO task : currentTasks) {
+                Object[] rowData ={
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getCategory().getCategoryValue().name(),
+                        task.getStatus()
+                };
+                taskTableModel.addRow(rowData);
+            }
+
+//--------------------------------------------------------------------------------------------------
+
+            JTable taskTable = new JTable(taskTableModel);
+            JScrollPane scrollPane = new JScrollPane(taskTable);
+            scrollPane.setLocation(60, 130);
+            scrollPane.setSize(520, 300);
+            add(scrollPane);
 
             JButton updateTaskButton = new JButton("Update Task");
             updateTaskButton.setSize(200,50);
@@ -97,6 +130,22 @@ public class MainScreen extends JFrame {
             updateTaskButton.setBackground(Color.decode(ColorConstants.ORANGE));
             updateTaskButton.setForeground(Color.WHITE);
             add(updateTaskButton);
+
+            updateTaskButton.addActionListener(e -> {
+                int selectedRow = taskTable.getSelectedRow();
+                int selectedColumn = taskTable.getSelectedColumn();
+
+                if(selectedRow != -1 && selectedColumn != -1){
+                    int id = (int) taskTable.getValueAt(selectedRow, 0);
+                    TaskDTO task =DataServices.searchTaskById(connection,id);
+                    UpdateTaskScreen updateTaskScreen = new UpdateTaskScreen(task);
+                    updateTaskScreen.setVisible(true);
+                    dispose();
+                }
+            });
+
+//--------------------------------------------------------------------------------------------------
+
 
             JButton addTaskButton = new JButton("Add Task");
             addTaskButton.setSize(200,50);
@@ -112,6 +161,8 @@ public class MainScreen extends JFrame {
                 addTaskScreen.setVisible(true);
                 dispose();
             });
+
+//--------------------------------------------------------------------------------------------------
 
             JLabel filterLabel = new JLabel("Search By Category");
             filterLabel.setForeground(Color.WHITE);
@@ -133,7 +184,7 @@ public class MainScreen extends JFrame {
             for(Category.CategoryValue category : Category.CategoryValue.values()) {
                 comboBox.addItem(category.toString());
             }
-
+//--------------------------------------------------------------------------------------------------
             JButton filterButton = new JButton("Search Category");
             filterButton.setSize(200,50);
             filterButton.setLocation(695, 290);
@@ -153,32 +204,5 @@ public class MainScreen extends JFrame {
             add(exportButton);
         }
 
-        private void createJTable(ArrayList<TaskDTO> tasks) {
-            String[] columnNames = {"ID","Title", "Description", "Category", "Status"};
-            DefaultTableModel taskTableModel = new DefaultTableModel(columnNames, 0){
-
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-
-            for(TaskDTO task : tasks) {
-                Object[] rowData ={
-                    task.getId(),
-                        task.getTitle(),
-                        task.getDescription(),
-                        task.getCategory().getCategoryValue().name(),
-                        task.getStatus()
-                };
-                taskTableModel.addRow(rowData);
-            }
-
-            JTable taskTable = new JTable(taskTableModel);
-            JScrollPane scrollPane = new JScrollPane(taskTable);
-            scrollPane.setLocation(60, 130);
-            scrollPane.setSize(520, 300);
-            add(scrollPane);
-        }
     }
 }
