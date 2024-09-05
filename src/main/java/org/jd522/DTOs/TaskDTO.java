@@ -10,19 +10,16 @@ package org.jd522.DTOs;
  */
 
 
-//TODO: Add Inner class for Categories
-
-
 public class TaskDTO {
 
     private int id;
     private String title;
     private String description;
-    private String category;
+    private Category category;
     private String status;
 
 
-    public TaskDTO(int id, String title, String description, String category, String status) {
+    public TaskDTO(int id, String title, String description, Category category, String status) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -68,5 +65,21 @@ public class TaskDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    private class Category{
+        private String category;
+
+        public Category(String category) {
+            this.category = category;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
     }
 }
