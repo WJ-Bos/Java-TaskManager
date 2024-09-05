@@ -1,6 +1,8 @@
 package org.jd522.DTOs;
 
 
+import org.jd522.Classes.Category;
+
 /**
  * @Author: WJ-Bos
  * Basic DTO (Data Transfer Object) class for a single Task
@@ -67,19 +69,5 @@ public class TaskDTO {
         this.status = status;
     }
 
-    private class Category{
-        private String category;
 
-        public Category(String category) {
-            this.category = category;
-        }
-
-        public String getCategory() {
-            return category;
-        }
-
-        public void setCategory(String category) {
-            this.category = category;
-        }
-    }
 }
