@@ -1,12 +1,11 @@
 package org.jd522.Services;
 
-import org.jd522.Constants.Categories;
+import org.jd522.Classes.Category;
 import org.jd522.Constants.TaskStatus;
+import org.jd522.DTOs.TaskDTO;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class DataServices {
 
@@ -51,16 +50,16 @@ public class DataServices {
             String insertStatement;
 
             insertStatement = "INSERT INTO tasks (task_title, task_description, task_category, task_status) VALUES " +
-                    "('Laundry', 'Wash, dry, fold, and put away clothes', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Vacuum', 'Clean the floors', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Dinner', 'Make dinner', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Workout', 'Go for a run and do some strength exercises', '" + Categories.FITNESS.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Learn Java', 'Watch tutorials and practice programming', '" + Categories.LEARNING.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Read a book', 'Read a book about programming', '" + Categories.LEARNING.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Fix the bike', 'Fix the bike and take it for a ride', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Paint the room', 'Paint the bedroom', '" + Categories.WORK.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Clean the house', 'Clean the entire house', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
-                    "('Buy groceries', 'Buy groceries for the week', '" + Categories.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')";
+                    "('Laundry', 'Wash, dry, fold, and put away clothes', '" + Category.CategoryValue.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Vacuum', 'Clean the floors', '" + Category.CategoryValue.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Dinner', 'Make dinner', '" + Category.CategoryValue.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Workout', 'Go for a run and do some strength exercises', '" + Category.CategoryValue.FITNESS.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Learn Java', 'Watch tutorials and practice programming', '" + Category.CategoryValue.LEARNING.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Read a book', 'Read a book about programming', '" + Category.CategoryValue.LEARNING.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Fix the bike', 'Fix the bike and take it for a ride', '" + Category.CategoryValue.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Paint the room', 'Paint the bedroom', '" + Category.CategoryValue.WORK.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Clean the house', 'Clean the entire house', '" + Category.CategoryValue.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')," +
+                    "('Buy groceries', 'Buy groceries for the week', '" + Category.CategoryValue.PERSONAL.name() + "', '" + TaskStatus.NOT_STARTED.name() + "')";
             statement.executeUpdate(insertStatement);
             statement.close();
         } catch (SQLException e) {
@@ -87,5 +86,95 @@ public class DataServices {
             throw new RuntimeException("Error checking if table is empty: " + e.getMessage(), e);
         }
         return false;
+    }
+
+
+    /**
+     * @param connection
+     * @return
+     * Fetches all tasks from the Database
+     */
+
+    public ArrayList<TaskDTO> fetchAllTasks(Connection connection) {
+
+        ArrayList<TaskDTO> tasks = new ArrayList<>();
+
+        try(Statement statement = connection.createStatement()){
+            String selectStatement = "SELECT * FROM tasks";
+            ResultSet resultSet = statement.executeQuery(selectStatement);
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("task_id");
+                String title = resultSet.getString("task_title");
+                String description = resultSet.getString("task_description");
+                String categoryString = resultSet.getString("task_category");
+                String status = resultSet.getString("task_status");
+
+                Category.CategoryValue categoryValue = Category.CategoryValue.valueOf(categoryString.toUpperCase());
+                Category category = new Category(categoryValue);
+
+                TaskDTO task = new TaskDTO(id, title, description, category, status);
+                tasks.add(task);
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return tasks;
+    }
+
+
+    /**
+     * @param connection
+     * @param title
+     * @param description
+     * @param category
+     *
+     * Adds a Task to the Database
+     */
+
+    public static void addTaskToDatabase(Connection connection, String title, String description, String category) {
+        try (Statement statement = connection.createStatement()) {
+            String insertStatement = "INSERT INTO tasks (task_title, task_description, task_category, task_status) VALUES " +
+                    "('" + title + "', '" + description + "', '" + category + "', '" + TaskStatus.NOT_STARTED.name() + "')";
+            statement.executeUpdate(insertStatement);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    /**
+     * @param connection
+     * @param title
+     * @return
+     *
+     * Searches for a Task in the Database using the Task name
+     */
+
+    public static TaskDTO searchTaskByName(Connection connection, String title){
+        String selectStatement = "SELECT * FROM tasks WHERE task_title = ? ";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(selectStatement)){
+            preparedStatement.setString(1, title);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                int id = resultSet.getInt("task_id");
+                String taskTitle = resultSet.getString("task_title");
+                String description = resultSet.getString("task_description");
+                String category = resultSet.getString("task_category");
+                String status = resultSet.getString("task_status");
+
+                //getting the Category Value from the String
+                Category.CategoryValue categoryValue = Category.CategoryValue.valueOf(category);
+
+                return new TaskDTO(id, taskTitle, description, new Category(categoryValue), status);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        //returning Null if there is No task found
+        return null;
     }
 }
