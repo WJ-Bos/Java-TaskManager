@@ -31,7 +31,9 @@ public class MainScreen extends JFrame {
         }catch (Exception e){
             System.out.println("Could Not establish connection");
         }
+
         //Method to Add Components to the Screen
+        //TODO: Add Inner Class to Handle this Method
         AddComponentsToScreen();
     }
 
@@ -39,7 +41,7 @@ public class MainScreen extends JFrame {
         JLabel title = new JLabel("Task Management");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("Verdana", Font.BOLD, 22));
-        title.setSize(230,30);
+        title.setSize(250,30);
         title.setLocation(400,30);
         add(title);
 

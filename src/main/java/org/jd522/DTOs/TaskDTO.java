@@ -10,6 +10,9 @@ package org.jd522.DTOs;
  */
 
 
+//TODO: Add Inner class for Categories
+
+
 public class TaskDTO {
 
     private int id;
