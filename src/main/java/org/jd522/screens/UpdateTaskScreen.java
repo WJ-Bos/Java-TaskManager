@@ -107,14 +107,35 @@ public class UpdateTaskScreen extends JFrame {
 
 //--------------------------------------------------------------------------------------------------
 
-            JButton addTask = new JButton("Save Task");
-            addTask.setSize(220,50);
-            addTask.setLocation(360,370);
-            addTask.setFont(new Font("Verdana", Font.BOLD, 16));
-            addTask.setBorder(BorderFactory.createLineBorder(Color.decode(ColorConstants.BLACK)));
-            addTask.setBackground(Color.decode(ColorConstants.GREEN_GREY));
-            addTask.setForeground(Color.WHITE);
-            add(addTask);
+            JButton saveTask = new JButton("Save Task");
+            saveTask.setSize(220,50);
+            saveTask.setLocation(360,370);
+            saveTask.setFont(new Font("Verdana", Font.BOLD, 16));
+            saveTask.setBorder(BorderFactory.createLineBorder(Color.decode(ColorConstants.BLACK)));
+            saveTask.setBackground(Color.decode(ColorConstants.GREEN_GREY));
+            saveTask.setForeground(Color.WHITE);
+            add(saveTask);
+
+            saveTask.addActionListener(e -> {
+                //TODO: Create a method to update the task in the database
+            });
+
+
+            JButton backButton = new JButton("Back");
+            backButton.setSize(220,50);
+            backButton.setLocation(360,440);
+            backButton.setFont(new Font("Verdana", Font.BOLD, 16));
+            backButton.setBorder(BorderFactory.createLineBorder(Color.decode(ColorConstants.BLACK)));
+            backButton.setBackground(Color.decode(ColorConstants.OFF_RED));
+            backButton.setForeground(Color.WHITE);
+            add(backButton);
+
+            backButton.addActionListener(e ->{
+                new MainScreen().setVisible(true);
+                dispose();
+            });
+
+
         }
     }
 }

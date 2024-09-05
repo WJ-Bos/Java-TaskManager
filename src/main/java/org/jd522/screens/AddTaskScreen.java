@@ -101,6 +101,20 @@ public class AddTaskScreen extends JFrame {
                 new MainScreen().setVisible(true);
 
             });
+
+            JButton backButton = new JButton("Back");
+            backButton.setSize(220,50);
+            backButton.setLocation(360,410);
+            backButton.setFont(new Font("Verdana", Font.BOLD, 16));
+            backButton.setBorder(BorderFactory.createLineBorder(Color.decode(ColorConstants.BLACK)));
+            backButton.setBackground(Color.decode(ColorConstants.OFF_RED));
+            backButton.setForeground(Color.WHITE);
+            add(backButton);
+
+            backButton.addActionListener(e ->{
+                dispose();
+                new MainScreen().setVisible(true);
+            });
         }
     }
 }
