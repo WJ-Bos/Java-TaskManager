@@ -160,7 +160,7 @@ public class DataServices {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if(resultSet.next()){
-                int id = resultSet.getInt("task_id");
+                int id = resultSet.getInt("id");
                 String taskTitle = resultSet.getString("task_title");
                 String description = resultSet.getString("task_description");
                 String category = resultSet.getString("task_category");

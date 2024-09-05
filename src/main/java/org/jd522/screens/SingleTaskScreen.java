@@ -11,62 +11,70 @@ public class SingleTaskScreen extends JFrame {
     public SingleTaskScreen(TaskDTO task) {
         super("Single Task Screen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
-        setResizable(false);
-        setSize(400, 600);
+        setSize(500, 400); // Increased screen size
         setLocationRelativeTo(null);
+        setResizable(false);
         getContentPane().setBackground(Color.decode(ColorConstants.DARK_GREY));
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // Padding
 
-        SingleTaskGui singleTaskScreen = new SingleTaskGui(task);
-    }
+        // Title
+        JLabel title = new JLabel(task.getTitle());
+        title.setForeground(Color.WHITE);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setFont(new Font("Verdana", Font.BOLD, 22));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(title, gbc);
 
-    private class SingleTaskGui{
+        // Description
+        JTextArea description = new JTextArea(task.getDescription());
+        description.setEditable(false);
+        description.setLineWrap(true);
+        description.setWrapStyleWord(true);
+        description.setBackground(Color.DARK_GRAY);
+        description.setForeground(Color.WHITE);
+        description.setFont(new Font("Verdana", Font.PLAIN, 12)); // Smaller font
+        JScrollPane scrollPane = new JScrollPane(description);
+        scrollPane.setPreferredSize(new Dimension(400, 60)); // Smaller size
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(scrollPane, gbc);
 
+        // Category
+        JLabel category = new JLabel(task.getCategory().getCategoryValue().name());
+        category.setForeground(Color.WHITE);
+        category.setFont(new Font("Verdana", Font.BOLD, 18));
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        add(category, gbc);
 
-        public SingleTaskGui(TaskDTO task) {
-            createSingleTaskGui(task);
-        }
+        // Status
+        JLabel status = new JLabel(task.getStatus());
+        status.setForeground(Color.WHITE);
+        status.setFont(new Font("Verdana", Font.BOLD, 18));
+        gbc.gridy = 3;
+        add(status, gbc);
 
-        public void createSingleTaskGui(TaskDTO task) {
-            JLabel title = new JLabel(task.getTitle());
-            title.setForeground(Color.WHITE);
-            title.setFont(new Font("Verdana", Font.BOLD, 22));
-            title.setSize(250,30);
-            title.setLocation(400,30);
-            add(title);
+        // Back Button
+        JButton backButton = new JButton("Back");
+        backButton.setFont(new Font("Verdana", Font.BOLD, 16));
+        backButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        backButton.setBackground(Color.decode(ColorConstants.OFF_RED));
+        backButton.setForeground(Color.WHITE);
+        backButton.setPreferredSize(new Dimension(150, 50));
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        add(backButton, gbc);
 
-            JTextField description = new JTextField(task.getDescription());
-            description.setSize(300,30);
-            description.setLocation(60,80);
-            add(description);
+        backButton.addActionListener(e -> {
+            dispose();
+            new MainScreen(); // Adjust to your actual main screen class
+        });
 
-            JLabel category = new JLabel(task.getCategory().getCategoryValue().name());
-            category.setForeground(Color.WHITE);
-            category.setFont(new Font("Verdana", Font.BOLD, 18));
-            category.setSize(250,30);
-            category.setLocation(400,80);
-            add(category);
-
-            JLabel status = new JLabel(task.getStatus().toString());
-            status.setForeground(Color.WHITE);
-            status.setFont(new Font("Verdana", Font.BOLD, 18));
-            status.setSize(250,30);
-            status.setLocation(400,120);
-            add(status);
-
-            JButton backButton = new JButton("Back");
-            backButton.setSize(100,50);
-            backButton.setLocation(100, 460);
-            backButton.setFont(new Font("Verdana", Font.BOLD, 16));
-            backButton.setBorder(BorderFactory.createLineBorder(Color.decode(ColorConstants.BLACK)));
-            backButton.setBackground(Color.decode(ColorConstants.OFF_RED));
-            backButton.setForeground(Color.WHITE);
-            add(backButton);
-
-            backButton.addActionListener(e -> {
-                dispose();
-                new MainScreen();
-            });
-        }
+        setVisible(true);
     }
 }

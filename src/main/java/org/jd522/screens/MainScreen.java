@@ -75,6 +75,18 @@ public class MainScreen extends JFrame {
             searchButton.setForeground(Color.WHITE);
             add(searchButton);
 
+            searchButton.addActionListener(e -> {
+                String searchText = searchBar.getText();
+                TaskDTO fetchedTask = DataServices.searchTaskByName(connection, searchText);
+                if(fetchedTask != null){
+                    SingleTaskScreen singleTaskScreen = new SingleTaskScreen(fetchedTask);
+                    singleTaskScreen.setVisible(true);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Task Not Found");
+                }
+            });
+
+
             createJTable(currentTasks);
 
             JButton updateTaskButton = new JButton("Update Task");
