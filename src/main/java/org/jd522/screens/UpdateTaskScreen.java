@@ -117,7 +117,14 @@ public class UpdateTaskScreen extends JFrame {
             add(saveTask);
 
             saveTask.addActionListener(e -> {
-                //TODO: Create a method to update the task in the database
+                DataServices.updateTask(task.getId(),
+                        taskTitle.getText(),
+                        taskDescription.getText(),
+                        taskCategory.getSelectedItem().toString(),
+                        taskStatus.getSelectedItem().toString(),
+                        connection);
+                dispose();
+                new MainScreen().setVisible(true);
             });
 
 
