@@ -11,7 +11,7 @@ public class SingleTaskScreen extends JFrame {
     public SingleTaskScreen(TaskDTO task) {
         super("Single Task Screen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 400); // Increased screen size
+        setSize(500, 400);
         setLocationRelativeTo(null);
         setResizable(false);
         getContentPane().setBackground(Color.decode(ColorConstants.DARK_GREY));
@@ -37,9 +37,9 @@ public class SingleTaskScreen extends JFrame {
         description.setWrapStyleWord(true);
         description.setBackground(Color.DARK_GRAY);
         description.setForeground(Color.WHITE);
-        description.setFont(new Font("Verdana", Font.PLAIN, 12)); // Smaller font
+        description.setFont(new Font("Verdana", Font.PLAIN, 12));
         JScrollPane scrollPane = new JScrollPane(description);
-        scrollPane.setPreferredSize(new Dimension(400, 60)); // Smaller size
+        scrollPane.setPreferredSize(new Dimension(400, 60));
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(scrollPane, gbc);
