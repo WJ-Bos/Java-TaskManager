@@ -4,6 +4,7 @@ import org.jd522.Classes.Category;
 import org.jd522.Constants.TaskStatus;
 import org.jd522.DTOs.TaskDTO;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -32,8 +33,8 @@ public class DataServices {
 
 
             //Seed the Tasks Table if the Table is empty
-            if (isTableEmpty(url, connection)) {
-                seedData(url, connection);
+            if (isTableEmpty(connection)) {
+                seedData(connection);
             }
             statement.close();
 
@@ -42,7 +43,7 @@ public class DataServices {
         }
     }
 
-    private static void  seedData(String url, Connection connection) {
+    private static void  seedData(Connection connection) {
         Statement statement = null;
 
         try {
@@ -68,13 +69,12 @@ public class DataServices {
     }
 
     /**
-     * @param url
      * @param connection
      * @return This method will check if the table is empty
      * It does this by checking if there are any rows in the table
      */
 
-    private static boolean isTableEmpty(String url, Connection connection) {
+    private static boolean isTableEmpty(Connection connection) {
         try (Statement statement = connection.createStatement()) {
             String query = "SELECT COUNT(*) FROM tasks";
             try (ResultSet rs = statement.executeQuery(query)) {
@@ -200,4 +200,63 @@ public class DataServices {
         }
         return null;
     }
+
+    public static void updateTask(int id, String title, String description, String category, String status, Connection connection){
+        String statement = "UPDATE tasks SET task_title = ?, task_description = ?, task_category = ?, task_status = ?" +
+                " WHERE id = ?";
+
+        System.out.println(statement);
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(statement)){
+            preparedStatement.setString(1, title);
+            preparedStatement.setString(2, description);
+            preparedStatement.setString(3, category.toUpperCase());
+            preparedStatement.setString(4, status);
+            preparedStatement.setInt(5, id);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+
+            if(rowsUpdated > 0){
+                JOptionPane.showMessageDialog(null, "Task Updated !");
+            }else {
+                JOptionPane.showMessageDialog(null, "Failed to Update Task");
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ArrayList<TaskDTO> searchByCategory(Connection connection, String category){
+        String statement = "SELECT * FROM tasks WHERE task_category = ?";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(statement)){
+
+            preparedStatement.setString(1, category);
+            ResultSet resultset = preparedStatement.executeQuery();
+
+            ArrayList<TaskDTO> tasks = new ArrayList<>();
+
+            while(resultset.next()){
+                int id = resultset.getInt("id");
+                String taskTitle = resultset.getString("task_title");
+                String taskDescription = resultset.getString("task_description");
+                Category.CategoryValue categoryValue = Category.CategoryValue.valueOf(resultset.getString("task_category"));
+                String taskStatus = resultset.getString("task_status");
+
+                TaskDTO task = new TaskDTO(id, taskTitle, taskDescription, new Category(categoryValue), taskStatus);
+                tasks.add(task);
+            }
+
+            if(tasks.isEmpty()){
+                JOptionPane.showMessageDialog(null, "No Tasks Found found with "+category);
+            }else {
+                return tasks;
+            }
+            return null;
+
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
